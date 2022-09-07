@@ -1,6 +1,8 @@
 //to shorten the link
 let inputtedLink = document.querySelector(".input-link");
-document.querySelector(".shorten-btn").addEventListener("click", shortenLink);
+let shortenBtn = document.querySelector(".shorten-btn");
+const errMessage = document.querySelector(".error-message");
+shortenBtn.addEventListener("click", shortenLink);
 function shortenLink() {
   fetch(`https://api.shrtco.de/v2/shorten?url=${inputtedLink.value}`)
     .then((res) => {
@@ -8,14 +10,19 @@ function shortenLink() {
       return res.json();
     })
     .then((data) => {
-      showResult(data.result.full_short_link);
-
       console.log(data);
+      showResult(data.result.full_short_link);
     })
     .catch((err) => {
       showErrorMessage(err);
     });
   // document.querySelector(".results-sec").classList.remove("hidden");
+}
+
+//show error massage if user don't input a link
+function showErrorMessage(err) {
+  errMessage.classList.remove("hidden");
+  errMessage.textContent = `${err} `;
 }
 
 //show the results
@@ -30,18 +37,21 @@ function showResult(link) {
     <button class="copy-btn" type="copy">Copy</button>
   </section>
 </section>`;
-  document
-    .querySelector(".form-sec")
-    .insertAdjacentHTML("afterend", htmlContent);
-  // inputtedLink.value = "";
+  document.querySelector(".area").insertAdjacentHTML("afterend", htmlContent);
+  inputtedLink.value = "";
 }
 
-//show error massage if user don't input a link
-function showErrorMessage(err) {
-  const errMessage = document.querySelector(".error-message");
-  errMessage.classList.remove("hidden");
-  errMessage.textContent = `${err} `;
-}
+shortenBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  if (rawLink.value == "") {
+    inputtedLink.classList.add("error");
+    errorMsg.classList.remove("hidden");
+  } else {
+    shortenLink(rawLink.value);
+    inputtedLink.classList.remove("error");
+    errorMsg.classList.add("hidden");
+  }
+});
 //to append the results cards
 
 //to copy the shortened link
